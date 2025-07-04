@@ -1,0 +1,32 @@
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node modules (if we add any build tools later)
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Chrome extension development
+*.pem
+*.crx
+*.zip
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Local config
+.env
+config.local.js
