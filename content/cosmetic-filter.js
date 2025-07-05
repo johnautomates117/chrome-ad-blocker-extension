@@ -289,12 +289,12 @@ function setupObserver() {
     
     if (shouldHideAds) {
       clearTimeout(observer.hideTimeout);
-      observer.hideTimeout = setTimeout(hideAds, 100);
+      observer.hideTimeout = setTimeout(hideAds, 250);
     }
     
     if (shouldRemoveOverlays) {
       clearTimeout(observer.overlayTimeout);
-      observer.overlayTimeout = setTimeout(removeOverlays, 50);
+      observer.overlayTimeout = setTimeout(removeOverlays, 100);
     }
   });
   
