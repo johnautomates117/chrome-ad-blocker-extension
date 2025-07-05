@@ -6,6 +6,7 @@
   
   "permissions": [
     "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
     "storage",
     "tabs",
     "activeTab",
