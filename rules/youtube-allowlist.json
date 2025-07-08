@@ -116,5 +116,23 @@
       "urlFilter": "*ytimg.com/*",
       "resourceTypes": ["image", "script", "stylesheet", "font"]
     }
+  },
+  {
+    "id": 1013,
+    "priority": 300,
+    "action": { "type": "allow" },
+    "condition": {
+      "urlFilter": "*googlevideo.com/videoplayback*",
+      "resourceTypes": ["media", "xmlhttprequest", "other"]
+    }
+  },
+  {
+    "id": 1014,
+    "priority": 300,
+    "action": { "type": "allow" },
+    "condition": {
+      "urlFilter": "*rr*.googlevideo.com/*",
+      "resourceTypes": ["media", "xmlhttprequest", "other"]
+    }
   }
 ]
