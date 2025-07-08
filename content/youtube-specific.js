@@ -7,6 +7,30 @@
     return;
   }
 
+  // Check if current site is whitelisted
+  async function isWhitelisted() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: 'getState'
+      });
+      return response && response.isWhitelisted;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Check if extension is enabled
+  async function isExtensionEnabled() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: 'getState'
+      });
+      return response && response.enabled;
+    } catch (e) {
+      return true; // Default to enabled if we can't check
+    }
+  }
+
   console.log('YouTube Ad Blocker: Initializing...');
 
   // YouTube ad selectors
@@ -100,10 +124,18 @@
   }
 
   // Setup observer
-  const observer = new MutationObserver(() => {
-    hideYouTubeAds();
-    skipVideoAds();
-    removeAdContainers();
+  const observer = new MutationObserver(async () => {
+    const enabled = await isExtensionEnabled();
+    if (!enabled) {
+      return;
+    }
+    
+    const whitelisted = await isWhitelisted();
+    if (!whitelisted) {
+      hideYouTubeAds();
+      skipVideoAds();
+      removeAdContainers();
+    }
   });
 
   // Start observing
@@ -114,26 +146,62 @@
     });
   }
 
-  // Initialize
-  if (document.body) {
-    hideYouTubeAds();
-    skipVideoAds();
-    removeAdContainers();
-    startObserving();
-  } else {
-    document.addEventListener('DOMContentLoaded', () => {
+  // Initialize with extension state and whitelist checks
+  async function initializeYouTubeBlocking() {
+    const enabled = await isExtensionEnabled();
+    if (!enabled) {
+      console.log('YouTube Ad Blocker: Extension is disabled, skipping ad blocking');
+      return;
+    }
+    
+    const whitelisted = await isWhitelisted();
+    if (whitelisted) {
+      console.log('YouTube Ad Blocker: Site is whitelisted, skipping ad blocking');
+      return;
+    }
+    
+    console.log('YouTube Ad Blocker: Active');
+    
+    if (document.body) {
       hideYouTubeAds();
       skipVideoAds();
       removeAdContainers();
       startObserving();
-    });
+    } else {
+      document.addEventListener('DOMContentLoaded', () => {
+        hideYouTubeAds();
+        skipVideoAds();
+        removeAdContainers();
+        startObserving();
+      });
+    }
+
+    // Run periodically for stubborn ads
+    setInterval(async () => {
+      const enabled = await isExtensionEnabled();
+      if (!enabled) {
+        return;
+      }
+      
+      const stillWhitelisted = await isWhitelisted();
+      if (!stillWhitelisted) {
+        hideYouTubeAds();
+        skipVideoAds();
+      }
+    }, 1000);
   }
 
-  // Run periodically for stubborn ads
-  setInterval(() => {
-    hideYouTubeAds();
-    skipVideoAds();
-  }, 1000);
+  // Initialize
+  initializeYouTubeBlocking();
 
-  console.log('YouTube Ad Blocker: Active');
+  // Listen for extension state changes
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'whitelistChanged') {
+      // Reload the page when whitelist status changes
+      location.reload();
+    } else if (request.action === 'extensionToggled') {
+      // Reload the page when extension is toggled
+      location.reload();
+    }
+  });
 })();
