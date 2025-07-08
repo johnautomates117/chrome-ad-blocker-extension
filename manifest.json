@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "AdGuard Lite - Chrome Ad Blocker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A lightweight ad blocker that blocks ads, trackers, and annoyances while maintaining website functionality.",
   
   "permissions": [
     "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
     "storage",
     "tabs",
     "activeTab",
@@ -41,11 +42,27 @@
       "js": ["content/cosmetic-filter.js"],
       "css": ["content/styles.css"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content/youtube-specific.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["*://movies2watch.tv/*", "*://www.movies2watch.tv/*"],
+      "js": ["content/movies2watch-specific.js"],
+      "run_at": "document_start",
+      "all_frames": true
     }
   ],
   
   "declarative_net_request": {
     "rule_resources": [
+      {
+        "id": "ruleset_youtube_allowlist",
+        "enabled": true,
+        "path": "rules/youtube-allowlist.json"
+      },
       {
         "id": "ruleset_ads",
         "enabled": true,
