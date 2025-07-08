@@ -47,6 +47,12 @@
       "matches": ["*://*.youtube.com/*"],
       "js": ["content/youtube-specific.js"],
       "run_at": "document_start"
+    },
+    {
+      "matches": ["*://movies2watch.tv/*", "*://www.movies2watch.tv/*"],
+      "js": ["content/movies2watch-specific.js"],
+      "run_at": "document_start",
+      "all_frames": true
     }
   ],
   
